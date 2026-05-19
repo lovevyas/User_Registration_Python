@@ -1,19 +1,9 @@
 import re
 
 
-def validate_first_name(name: str) -> bool:
+def validate_name(name: str) -> bool:
     pattern = r'^[A-Z][a-z]{2,}$'
     return bool(re.fullmatch(pattern, name))
-
-
-class User:
-    def __init__(self, first_name: str):
-        if not validate_first_name(first_name):
-            raise ValueError("Invalid first name")
-        self.first_name = first_name
-
-    def __str__(self):
-        return f"First Name: {self.first_name}"
 
 
 def get_input(field, validator, error):
@@ -24,14 +14,33 @@ def get_input(field, validator, error):
         print(f"Error: {error}")
 
 
-def main():
-    first_name = get_input(
-        "First Name",
-        validate_first_name,
-        "Should start with capital and have minimum 3 characters",
+def get_name(field):
+    return get_input(
+        field,
+        validate_name,
+        "Should start with capital and have minimum 3 characters"
     )
 
-    user = User(first_name)
+
+class User:
+    def __init__(self, first_name: str, last_name: str):
+        if not validate_name(first_name):
+            raise ValueError("Invalid first name")
+        if not validate_name(last_name):
+            raise ValueError("Invalid last name")
+
+        self.first_name = first_name
+        self.last_name = last_name
+
+    def __str__(self):
+        return f"First Name: {self.first_name}\nLast Name: {self.last_name}"
+
+
+def main():
+    first_name = get_name("First Name")
+    last_name = get_name("Last Name")
+
+    user = User(first_name, last_name)
     print(user)
 
 
