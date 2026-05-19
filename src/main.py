@@ -1,14 +1,24 @@
 import re
 
 
-def validate_email(email: str) -> bool:
-    LOCAL_PART = r'[a-zA-Z0-9]+([._+-]?[a-zA-Z0-9]+)*'
-    DOMAIN = r'[a-zA-Z0-9]+'
-    TLD = r'[a-z]{2,}'
+# ---------------- VALIDATORS ---------------- #
 
-    pattern = rf'^{LOCAL_PART}@{DOMAIN}\.{TLD}(\.{TLD})?$'
+def validate_name(name: str) -> bool:
+    pattern = r'^[A-Z][a-z]{2,}$'
+    return bool(re.fullmatch(pattern, name))
+
+
+def validate_email(email: str) -> bool:
+    pattern = r'^[a-zA-Z0-9]+([._+-][a-zA-Z0-9]+)?@[a-zA-Z0-9]+\.[a-z]{2,}(\.[a-z]{2,})?$'
     return bool(re.fullmatch(pattern, email))
 
+
+def validate_mobile(number: str) -> bool:
+    pattern = r'^[0-9]{2} [0-9]{10}$'
+    return bool(re.fullmatch(pattern, number))
+
+
+# ---------------- INPUT HANDLING ---------------- #
 
 def get_input(field, validator, error):
     while True:
@@ -16,11 +26,6 @@ def get_input(field, validator, error):
         if validator(value):
             return value
         print(f"Error: {error}")
-
-
-def validate_name(name: str) -> bool:
-    pattern = r'^[A-Z][a-z]{2,}$'
-    return bool(re.fullmatch(pattern, name))
 
 
 def get_name(field):
@@ -39,33 +44,51 @@ def get_email():
     )
 
 
+def get_mobile():
+    return get_input(
+        "Mobile Number",
+        validate_mobile,
+        "Format should be: 91 9876543210"
+    )
+
+
+# ---------------- DOMAIN MODEL ---------------- #
+
 class User:
-    def __init__(self, first_name: str, last_name: str, email: str):
+    def __init__(self, first_name: str, last_name: str, email: str, mobile: str):
         if not validate_name(first_name):
             raise ValueError("Invalid first name")
         if not validate_name(last_name):
             raise ValueError("Invalid last name")
         if not validate_email(email):
             raise ValueError("Invalid email")
+        if not validate_mobile(mobile):
+            raise ValueError("Invalid mobile number")
 
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
+        self.mobile = mobile
 
     def __str__(self):
         return (
             f"First Name: {self.first_name}\n"
             f"Last Name: {self.last_name}\n"
-            f"Email: {self.email}"
+            f"Email: {self.email}\n"
+            f"Mobile: {self.mobile}"
         )
 
+
+# ---------------- MAIN ---------------- #
 
 def main():
     first_name = get_name("First Name")
     last_name = get_name("Last Name")
     email = get_email()
+    mobile = get_mobile()
 
-    user = User(first_name, last_name, email)
+    user = User(first_name, last_name, email, mobile)
+    print("\nUser Registered Successfully:\n")
     print(user)
 
 
