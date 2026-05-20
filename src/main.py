@@ -26,6 +26,9 @@ def validate_password(password: str) -> bool:
     
     if not re.search(r'[0-9]', password):
         return False
+        
+    if len(re.findall(r'[@#$%^&+=]', password)) != 1:
+        return False
     
     return True 
 
