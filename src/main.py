@@ -17,6 +17,8 @@ def validate_mobile(number: str) -> bool:
     pattern = r'^[0-9]{2} [0-9]{10}$'
     return bool(re.fullmatch(pattern, number))
 
+def validate_password(password: str) -> bool:
+    return len(password) >= 8
 
 # ---------------- INPUT HANDLING ---------------- #
 
@@ -51,11 +53,14 @@ def get_mobile():
         "Format should be: 91 9876543210"
     )
 
+def get_password():
+    return get_input("Password", validate_password,
+                     "Password must be at least 8 characters long")
 
 # ---------------- DOMAIN MODEL ---------------- #
 
 class User:
-    def __init__(self, first_name: str, last_name: str, email: str, mobile: str):
+    def __init__(self, first_name: str, last_name: str, email: str, mobile: str, password: str):
         if not validate_name(first_name):
             raise ValueError("Invalid first name")
         if not validate_name(last_name):
@@ -64,11 +69,13 @@ class User:
             raise ValueError("Invalid email")
         if not validate_mobile(mobile):
             raise ValueError("Invalid mobile number")
-
+        if not validate_password(password):
+            raise ValueError("Invalid password")
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
         self.mobile = mobile
+        self.password = password
 
     def __str__(self):
         return (
@@ -86,8 +93,9 @@ def main():
     last_name = get_name("Last Name")
     email = get_email()
     mobile = get_mobile()
+    password = get_password()
 
-    user = User(first_name, last_name, email, mobile)
+    user = User(first_name, last_name, email, mobile, password)
     print("\nUser Registered Successfully:\n")
     print(user)
 
