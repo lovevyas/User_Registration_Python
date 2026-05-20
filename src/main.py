@@ -23,6 +23,10 @@ def validate_password(password: str) -> bool:
 
     if not re.search(r'[A-Z]', password):
         return False
+    
+    if not re.search(r'[0-9]', password):
+        return False
+    
     return True 
 
 # ---------------- INPUT HANDLING ---------------- #
@@ -59,8 +63,9 @@ def get_mobile():
     )
 
 def get_password():
-    return get_input("Password", validate_password,
-                     "Password must be at least 8 characters and contain at least 1 uppercase letter")
+    return get_input("Password",
+                     validate_password,
+                     "Password must be at least 8 chars, contain 1 uppercase and 1 number")
 
 # ---------------- DOMAIN MODEL ---------------- #
 
