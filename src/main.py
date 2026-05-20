@@ -18,7 +18,12 @@ def validate_mobile(number: str) -> bool:
     return bool(re.fullmatch(pattern, number))
 
 def validate_password(password: str) -> bool:
-    return len(password) >= 8
+    if len(password) < 8:
+        return False
+
+    if not re.search(r'[A-Z]', password):
+        return False
+    return True 
 
 # ---------------- INPUT HANDLING ---------------- #
 
@@ -55,7 +60,7 @@ def get_mobile():
 
 def get_password():
     return get_input("Password", validate_password,
-                     "Password must be at least 8 characters long")
+                     "Password must be at least 8 characters and contain at least 1 uppercase letter")
 
 # ---------------- DOMAIN MODEL ---------------- #
 
