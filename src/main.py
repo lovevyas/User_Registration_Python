@@ -54,7 +54,7 @@ def get_email():
     return get_input(
         "Email",
         validate_email,
-        "Invalid email format (e.g., abc.xyz@bl.co.in)"
+        "Invalid email format (e.g. john@example.com, abc.xyz@bl.co.in)"
     )
 
 
@@ -68,7 +68,12 @@ def get_mobile():
 def get_password():
     return get_input("Password",
                      validate_password,
-                     "Password must be at least 8 chars, contain 1 uppercase and 1 number")
+                    """
+                    Password should have a atleast 8 characters.
+                    It should contain atleast one Uppercase letter.
+                    It should contain atleast one numberic number.
+                    It should contain exactly one special character.
+                    """)
 
 # ---------------- DOMAIN MODEL ---------------- #
 
