@@ -14,7 +14,8 @@ def test_valid_names():
 
 
 def test_invalid_names():
-    assert not validate_name("jo")      
+    assert not validate_name("jo")   
+    assert not validate_name("123")
     assert not validate_name("john")    
     assert not validate_name("J")       
     assert not validate_name("J1")      
