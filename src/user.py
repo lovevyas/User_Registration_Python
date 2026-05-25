@@ -2,93 +2,62 @@ import re
 
 
 # ---------------- VALIDATORS ---------------- #
+import re
 
-def validate_name(name: str) -> bool:
-    pattern = r'^[A-Z][a-z]{2,}$'
-    return bool(re.fullmatch(pattern, name))
+class UserValidator:
 
+    @staticmethod
+    def validate_name(name: str) -> bool:
+        return bool(re.fullmatch(r'^[A-Z][a-z]{2,}$', name))
 
-def validate_email(email: str) -> bool:
-    pattern = r'^[a-zA-Z0-9]+([._+-][a-zA-Z0-9]+)?@[a-zA-Z0-9]+\.[a-z]{2,}(\.[a-z]{2,})?$'
-    return bool(re.fullmatch(pattern, email))
+    @staticmethod
+    def validate_email(email: str) -> bool:
+        return bool(re.fullmatch(
+            r'^[a-zA-Z0-9]+([._+-][a-zA-Z0-9]+)?@[a-zA-Z0-9]+\.[a-z]{2,}(\.[a-z]{2,})?$',
+            email
+        ))
 
+    @staticmethod
+    def validate_mobile(number: str) -> bool:
+        return bool(re.fullmatch(r'^[0-9]{2} [0-9]{10}$', number))
 
-def validate_mobile(number: str) -> bool:
-    pattern = r'^[0-9]{2} [0-9]{10}$'
-    return bool(re.fullmatch(pattern, number))
-
-def validate_password(password: str) -> bool:
-    if len(password) < 8:
-        return False
-
-    if not re.search(r'[A-Z]', password):
-        return False
-    
-    if not re.search(r'[0-9]', password):
-        return False
-        
-    if len(re.findall(r'[@#$%^&+=]', password)) != 1:
-        return False
-    
-    return True 
-
+    @staticmethod
+    def validate_password(password: str) -> bool:
+        if len(password) < 8:
+            return False
+        if not re.search(r'[A-Z]', password):
+            return False
+        if not re.search(r'[0-9]', password):
+            return False
+        if len(re.findall(r'[@#$%^&+=]', password)) != 1:
+            return False
+        return True
 # ---------------- INPUT HANDLING ---------------- #
+class UserService:
+    
+    @staticmethod
+    def create_user(first_name, last_name, email, mobile, password):
 
-def get_input(field, validator, error):
-    while True:
-        value = input(f"Enter {field}: ")
-        if validator(value):
-            return value
-        print(f"Error: {error}")
+        if not UserValidator.validate_name(first_name):
+            raise ValueError("Invalid first name")
 
+        if not UserValidator.validate_name(last_name):
+            raise ValueError("Invalid last name")
 
-def get_name(field):
-    return get_input(
-        field,
-        validate_name,
-        "Should start with capital and have minimum 3 characters"
-    )
+        if not UserValidator.validate_email(email):
+            raise ValueError("Invalid email")
 
+        if not UserValidator.validate_mobile(mobile):
+            raise ValueError("Invalid mobile")
 
-def get_email():
-    return get_input(
-        "Email",
-        validate_email,
-        "Invalid email format (e.g. john@example.com, abc.xyz@bl.co.in)"
-    )
+        if not UserValidator.validate_password(password):
+            raise ValueError("Invalid password")
 
-
-def get_mobile():
-    return get_input(
-        "Mobile Number",
-        validate_mobile,
-        "Format should be: 91 9876543210"
-    )
-
-def get_password():
-    return get_input("Password",
-                     validate_password,
-                    """
-                    Password should have a atleast 8 characters.
-                    It should contain atleast one Uppercase letter.
-                    It should contain atleast one numberic number.
-                    It should contain exactly one special character.
-                    """)
-
+        return User(first_name, last_name, email, mobile, password)
 # ---------------- DOMAIN MODEL ---------------- #
 
 class User:
-    def __init__(self, first_name: str, last_name: str, email: str, mobile: str, password: str):
-        if not validate_name(first_name):
-            raise ValueError("Invalid first name")
-        if not validate_name(last_name):
-            raise ValueError("Invalid last name")
-        if not validate_email(email):
-            raise ValueError("Invalid email")
-        if not validate_mobile(mobile):
-            raise ValueError("Invalid mobile number")
-        if not validate_password(password):
-            raise ValueError("Invalid password")
+    def __init__(self, first_name, last_name, email, mobile, password):
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
@@ -107,16 +76,20 @@ class User:
 # ---------------- MAIN ---------------- #
 
 def main():
-    first_name = get_name("First Name")
-    last_name = get_name("Last Name")
-    email = get_email()
-    mobile = get_mobile()
-    password = get_password()
+    first_name = input("Enter First Name: ")
+    last_name = input("Enter Last Name: ")
+    email = input("Enter Email: ")
+    mobile = input("Enter Mobile: ")
+    password = input("Enter Password: ")
 
-    user = User(first_name, last_name, email, mobile, password)
-    print("\nUser Registered Successfully:\n")
-    print(user)
-
+    try:
+        user = UserService.create_user(
+            first_name, last_name, email, mobile, password
+        )
+        print("\nUser Registered Successfully:\n")
+        print(user)
+    except ValueError as e:
+        print(f"Error: {e}")
 
 if __name__ == "__main__":
     main()
